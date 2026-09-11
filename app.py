@@ -6,6 +6,7 @@ import re
 import time
 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.layers import Embedding
 
 st.set_page_config(
     page_title="IMDB Sentiment Classifier",
@@ -20,9 +21,25 @@ h1 { text-align: center; }
 """, unsafe_allow_html=True)
 
 
+# =========================================================
+# FIX: Custom Embedding layer untuk mengatasi konflik versi
+# Keras (menangani parameter 'quantization_config' yang
+# tidak dikenali oleh versi Keras yang lebih lama)
+# =========================================================
+class CompatibleEmbedding(Embedding):
+    @classmethod
+    def from_config(cls, config):
+        config.pop('quantization_config', None)
+        return cls(**config)
+
+
 @st.cache_resource
 def load_keras_model(model_path):
-    return tf.keras.models.load_model(model_path, compile=False)
+    return tf.keras.models.load_model(
+        model_path,
+        compile=False,
+        custom_objects={'Embedding': CompatibleEmbedding}
+    )
 
 
 class_names = ['Negative', 'Positive']
