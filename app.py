@@ -95,17 +95,27 @@ def predict(padded_review):
 if 'history' not in st.session_state:
     st.session_state.history = []
 
+if 'input_key' not in st.session_state:
+    st.session_state.input_key = 0
 
-tab1, tab2 = st.tabs(["🔍 Prediksi", "📊 Tentang Model"])
+
+def clear_history():
+    st.session_state.history = []
+    st.session_state.input_key += 1  # reset text_area, teks review hilang
+
+
+# ===== TITLE DI ATAS SEMUA TAB =====
+st.title("Klasifikasi Sentimen Review Film IMDB")
+st.write(f"Menggunakan model: **{model_choice}**")
+
+tab1, tab2, tab3 = st.tabs(["🔍 Prediksi", "📊 Tentang Model", "🕘 Riwayat"])
 
 with tab1:
-    st.title("Klasifikasi Sentimen Review Film IMDB")
-    st.write(f"Menggunakan model: **{model_choice}**")
-
     user_review = st.text_area(
         "Tulis review film (dalam Bahasa Inggris)",
         height=150,
-        placeholder="Contoh: This movie was absolutely fantastic, great acting and story..."
+        placeholder="Contoh: This movie was absolutely fantastic, great acting and story...",
+        key=f"review_{st.session_state.input_key}"
     )
 
     analyze_clicked = st.button("Analisis Sentimen", type="primary", use_container_width=True)
@@ -175,14 +185,6 @@ with tab1:
             except Exception as error:
                 st.error(f"Prediksi gagal: {error}")
 
-    if st.session_state.history:
-        st.write("### Riwayat Prediksi")
-        st.table(st.session_state.history)
-
-        if st.button("🗑️ Hapus Riwayat"):
-            st.session_state.history = []
-            st.rerun()
-
 with tab2:
     st.header("Tentang Model")
     st.write(f"**Model aktif:** {model_choice}")
@@ -193,3 +195,11 @@ with tab2:
         st.write("Model GRU dengan konfigurasi 1 (arsitektur dasar), dilatih pada sequence review IMDB.")
     else:
         st.write("Model GRU dengan konfigurasi 2 (hasil tuning tambahan), merupakan model terbaik pada eksperimen.")
+
+with tab3:
+    st.header("Riwayat Prediksi")
+    if st.session_state.history:
+        st.table(st.session_state.history)
+        st.button("🗑️ Hapus Riwayat", on_click=clear_history)
+    else:
+        st.info("Belum ada riwayat prediksi. Analisis review di tab Prediksi terlebih dahulu.")
