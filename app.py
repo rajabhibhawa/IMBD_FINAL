@@ -199,7 +199,7 @@ with tab2:
 with tab3:
     st.header("Riwayat Prediksi")
     if st.session_state.history:
-        st.table(st.session_state.history)
+        st.dataframe(st.session_state.history, hide_index=True, use_container_width=True)
         st.button("🗑️ Hapus Riwayat", on_click=clear_history)
     else:
         st.info("Belum ada riwayat prediksi. Analisis review di tab Prediksi terlebih dahulu.")
