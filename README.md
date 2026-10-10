@@ -4,7 +4,7 @@ A web application for classifying the sentiment of movie reviews (Positive/Negat
 
 ## 🚀 Live Demo
 
-🔗 [https://imbdfinal.streamlit.app/](https://imbdfinal.streamlit.app/)
+🔗 [https://imbdfinal.streamlit.app/]([https://imbdfinal.streamlit.app/])
 
 ## 📋 Features
 
